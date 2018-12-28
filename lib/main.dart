@@ -10,13 +10,21 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: Text('EasyList'),
         ),
-        body: Card(
-          child: Column(
-            children: <Widget>[
-              Image.asset('assets/food.jpg'),
-              Text('Food Paradise')
-            ],
-          ),
+        body: Column(
+          children: <Widget>[
+            Container(
+                margin: EdgeInsets.all(10.0),
+                child:
+                    RaisedButton(child: Text('Add Product'), onPressed: () {})),
+            Card(
+              child: Column(
+                children: <Widget>[
+                  Image.asset('assets/food.jpg'),
+                  Text('Food Paradise')
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );
