@@ -24,8 +24,13 @@ class _MyAppState extends State<MyApp> {
           children: <Widget>[
             Container(
                 margin: EdgeInsets.all(10.0),
-                child:
-                    RaisedButton(child: Text('Add Product'), onPressed: () {})),
+                child: RaisedButton(
+                    child: Text('Add Product'),
+                    onPressed: () {
+                      setState(() {
+                        _products.add('Advanced Food Tester');
+                      });
+                    })),
             Column(
                 children: _products
                     .map((p) => Card(
