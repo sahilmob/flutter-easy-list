@@ -10,7 +10,9 @@ class ProductCreatePage extends StatelessWidget {
           showModalBottomSheet(
               context: context,
               builder: (BuildContext context) {
-                return Center(child: Text('This is a modal'));
+                return Center(
+                  child: Text('This is a Modal!'),
+                );
               });
         },
       ),
