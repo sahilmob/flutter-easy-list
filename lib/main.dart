@@ -57,6 +57,11 @@ class _MyAppState extends State<MyApp> {
         }
         return null;
       },
+      onUnknownRoute: (RouteSettings settings) {
+        return MaterialPageRoute(
+            builder: (BuildContext contexy) =>
+                ProductsPage(_products, _addProducts, _deleteProduct));
+      },
       // home: AuthPage()
     );
   }
