@@ -26,7 +26,9 @@ class _AuthPageState extends State<AuthPage> {
                   colorFilter: ColorFilter.mode(
                       Colors.black.withOpacity(0.4), BlendMode.dstATop))),
           padding: EdgeInsets.all(10.0),
-          child: ListView(
+          child: Center(
+              child: SingleChildScrollView(
+                  child: Column(
             children: <Widget>[
               TextField(
                 decoration: InputDecoration(labelText: "Email"),
@@ -67,7 +69,7 @@ class _AuthPageState extends State<AuthPage> {
                 },
               )
             ],
-          )),
+          )))),
     );
   }
 }
