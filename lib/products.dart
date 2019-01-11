@@ -38,6 +38,15 @@ class Products extends StatelessWidget {
               ],
             ),
           ),
+          DecoratedBox(
+            child: Padding(
+              child: Text('Union Square, San Francisco'),
+              padding: EdgeInsets.symmetric(vertical: 2.5, horizontal: 5.0),
+            ),
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey, width: 1.0),
+                borderRadius: BorderRadius.circular(5.0)),
+          ),
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: <Widget>[
