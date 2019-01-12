@@ -88,24 +88,29 @@ class _ProudctCreatePageState extends State<ProductCreatePage> {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 768.0 ? 500 : deviceWidth * 0.95;
     final double targetPadding = deviceWidth - targetWidth;
-    return Container(
-      width: targetWidth,
-      margin: EdgeInsets.all(10.0),
-      child: Form(
-        key: _formKey,
-        child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: targetPadding / 2),
-          children: <Widget>[
-            _buildTitleTextField(),
-            _buildDescriptionTextField(),
-            _buildPriceTextField(),
-            SizedBox(height: 10.0),
-            RaisedButton(
-                child: Text('Save'),
-                color: Theme.of(context).accentColor,
-                textColor: Colors.white,
-                onPressed: _submitForm)
-          ],
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Container(
+        width: targetWidth,
+        margin: EdgeInsets.all(10.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: EdgeInsets.symmetric(horizontal: targetPadding / 2),
+            children: <Widget>[
+              _buildTitleTextField(),
+              _buildDescriptionTextField(),
+              _buildPriceTextField(),
+              SizedBox(height: 10.0),
+              RaisedButton(
+                  child: Text('Save'),
+                  color: Theme.of(context).accentColor,
+                  textColor: Colors.white,
+                  onPressed: _submitForm)
+            ],
+          ),
         ),
       ),
     );
