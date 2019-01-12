@@ -3,11 +3,16 @@ import 'package:flutter/material.dart';
 class ProductEditPage extends StatefulWidget {
   final Function addProduct;
   final Function updateProduct;
+  final Function deleteProduct;
   final Map<String, dynamic> product;
   final int productIndex;
 
   ProductEditPage(
-      {this.addProduct, this.updateProduct, this.product, this.productIndex});
+      {this.addProduct,
+      this.updateProduct,
+      this.deleteProduct,
+      this.product,
+      this.productIndex});
 
   @override
   State<StatefulWidget> createState() {
@@ -73,25 +78,11 @@ class _ProudctEditPageState extends State<ProductEditPage> {
     );
   }
 
-  void _submitForm() {
-    if (!_formKey.currentState.validate()) {
-      return;
-    }
-    _formKey.currentState.save();
-    if (widget.product == null) {
-      widget.addProduct(_formData);
-    } else {
-      widget.updateProduct(widget.productIndex, _formData);
-    }
-    Navigator.pushReplacementNamed(context, '/products');
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildPageContent(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 768.0 ? 500 : deviceWidth * 0.95;
     final double targetPadding = deviceWidth - targetWidth;
-    final Widget pageContent = GestureDetector(
+    return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
       },
@@ -117,6 +108,24 @@ class _ProudctEditPageState extends State<ProductEditPage> {
         ),
       ),
     );
+  }
+
+  void _submitForm() {
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
+    _formKey.currentState.save();
+    if (widget.product == null) {
+      widget.addProduct(_formData);
+    } else {
+      widget.updateProduct(widget.productIndex, _formData);
+    }
+    Navigator.pushReplacementNamed(context, '/products');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget pageContent = _buildPageContent(context);
     return widget.product == null
         ? pageContent
         : Scaffold(
