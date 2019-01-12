@@ -12,9 +12,12 @@ class ProductCreatePage extends StatefulWidget {
 }
 
 class _ProudctCreatePageState extends State<ProductCreatePage> {
-  String _titleValue;
-  String _descriptionValue;
-  double _priceValue;
+  final Map<String, dynamic> _formData = {
+    'title': null,
+    'description': null,
+    'price': null,
+    'image': 'assets/food.jpg'
+  };
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   Widget _buildTitleTextField() {
@@ -26,9 +29,7 @@ class _ProudctCreatePageState extends State<ProductCreatePage> {
         }
       },
       onSaved: (String value) {
-        setState(() {
-          _titleValue = value;
-        });
+        _formData['title'] = value;
       },
     );
   }
@@ -38,14 +39,12 @@ class _ProudctCreatePageState extends State<ProductCreatePage> {
       decoration: InputDecoration(labelText: 'Product Description'),
       validator: (String value) {
         if (value.isEmpty || value.length < 10) {
-          return 'Description is requierd and should be 5+ characters long.';
+          return 'Description is requierd and should be 10+ characters long.';
         }
       },
       maxLines: 4,
       onSaved: (String value) {
-        setState(() {
-          _descriptionValue = value;
-        });
+        _formData['description'] = value;
       },
     );
   }
@@ -61,9 +60,7 @@ class _ProudctCreatePageState extends State<ProductCreatePage> {
       },
       keyboardType: TextInputType.number,
       onSaved: (String value) {
-        setState(() {
-          _priceValue = double.parse(value);
-        });
+        _formData['price'] = double.parse(value);
       },
     );
   }
@@ -73,13 +70,7 @@ class _ProudctCreatePageState extends State<ProductCreatePage> {
       return;
     }
     _formKey.currentState.save();
-    final Map<String, dynamic> product = {
-      'title': _titleValue,
-      'description': _descriptionValue,
-      'price': _priceValue,
-      'image': 'assets/food.jpg'
-    };
-    widget.addProduct(product);
+    widget.addProduct(_formData);
     Navigator.pushReplacementNamed(context, '/products');
   }
 
