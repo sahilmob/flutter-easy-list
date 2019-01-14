@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import '../models/product.dart';
 
 class ProductEditPage extends StatefulWidget {
   final Function addProduct;
   final Function updateProduct;
   final Function deleteProduct;
-  final Map<String, dynamic> product;
+  final Product product;
   final int productIndex;
 
   ProductEditPage(
@@ -31,7 +32,7 @@ class _ProudctEditPageState extends State<ProductEditPage> {
 
   Widget _buildTitleTextField() {
     return TextFormField(
-      initialValue: widget.product == null ? '' : widget.product['title'],
+      initialValue: widget.product == null ? '' : widget.product.title,
       decoration: InputDecoration(labelText: 'Product Title'),
       validator: (String value) {
         if (value.isEmpty || value.length < 5) {
@@ -46,7 +47,7 @@ class _ProudctEditPageState extends State<ProductEditPage> {
 
   Widget _buildDescriptionTextField() {
     return TextFormField(
-      initialValue: widget.product == null ? '' : widget.product['description'],
+      initialValue: widget.product == null ? '' : widget.product.description,
       decoration: InputDecoration(labelText: 'Product Description'),
       validator: (String value) {
         if (value.isEmpty || value.length < 10) {
@@ -63,7 +64,7 @@ class _ProudctEditPageState extends State<ProductEditPage> {
   Widget _buildPriceTextField() {
     return TextFormField(
       initialValue:
-          widget.product == null ? '' : widget.product['price'].toString(),
+          widget.product == null ? '' : widget.product.price.toString(),
       decoration: InputDecoration(labelText: 'Product Price'),
       validator: (String value) {
         if (value.isEmpty ||
@@ -116,9 +117,19 @@ class _ProudctEditPageState extends State<ProductEditPage> {
     }
     _formKey.currentState.save();
     if (widget.product == null) {
-      widget.addProduct(_formData);
+      widget.addProduct(Product(
+          title: _formData['title'],
+          description: _formData['description'],
+          price: _formData['price'],
+          image: _formData['image']));
     } else {
-      widget.updateProduct(widget.productIndex, _formData);
+      widget.updateProduct(
+          widget.productIndex,
+          Product(
+              title: _formData['title'],
+              description: _formData['description'],
+              price: _formData['price'],
+              image: _formData['image']));
     }
     Navigator.pushReplacementNamed(context, '/products');
   }
