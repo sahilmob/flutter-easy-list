@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
+
 import '../models/product.dart';
+import '../scoped-models/products.dart';
 
 class ProductEditPage extends StatefulWidget {
   final Function addProduct;
@@ -79,6 +82,19 @@ class _ProudctEditPageState extends State<ProductEditPage> {
     );
   }
 
+  Widget _buildSubmitButton() {
+    return ScopedModelDescendant<ProductsModel>(
+      builder: (BuildContext context, Widget child, ProductsModel model) {
+        return RaisedButton(
+          child: Text('Save'),
+          color: Theme.of(context).accentColor,
+          textColor: Colors.white,
+          onPressed: () => _submitForm(model.addProduct, model.updateProduct),
+        );
+      },
+    );
+  }
+
   Widget _buildPageContent(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 768.0 ? 500 : deviceWidth * 0.95;
@@ -99,11 +115,7 @@ class _ProudctEditPageState extends State<ProductEditPage> {
               _buildDescriptionTextField(),
               _buildPriceTextField(),
               SizedBox(height: 10.0),
-              RaisedButton(
-                  child: Text('Save'),
-                  color: Theme.of(context).accentColor,
-                  textColor: Colors.white,
-                  onPressed: _submitForm)
+              _buildSubmitButton(),
             ],
           ),
         ),
@@ -111,19 +123,19 @@ class _ProudctEditPageState extends State<ProductEditPage> {
     );
   }
 
-  void _submitForm() {
+  void _submitForm(Function addProduct, Function updateProduct) {
     if (!_formKey.currentState.validate()) {
       return;
     }
     _formKey.currentState.save();
     if (widget.product == null) {
-      widget.addProduct(Product(
+      addProduct(Product(
           title: _formData['title'],
           description: _formData['description'],
           price: _formData['price'],
           image: _formData['image']));
     } else {
-      widget.updateProduct(
+      updateProduct(
           widget.productIndex,
           Product(
               title: _formData['title'],
