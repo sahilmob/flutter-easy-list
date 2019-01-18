@@ -71,13 +71,18 @@ class _ProudctEditPageState extends State<ProductEditPage> {
   Widget _buildSubmitButton() {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
-        return RaisedButton(
-          child: Text('Save'),
-          color: Theme.of(context).accentColor,
-          textColor: Colors.white,
-          onPressed: () => _submitForm(model.addProduct, model.updateProduct,
-              model.selectProduct, model.selectedProductIndex),
-        );
+        return model.isLoading
+            ? Center(child: CircularProgressIndicator())
+            : RaisedButton(
+                child: Text('Save'),
+                color: Theme.of(context).accentColor,
+                textColor: Colors.white,
+                onPressed: () => _submitForm(
+                    model.addProduct,
+                    model.updateProduct,
+                    model.selectProduct,
+                    model.selectedProductIndex),
+              );
       },
     );
   }
@@ -123,13 +128,12 @@ class _ProudctEditPageState extends State<ProductEditPage> {
         _formData['description'],
         _formData['image'],
         _formData['price'],
-      );
+      ).then((_) => Navigator.pushReplacementNamed(context, '/products')
+          .then((_) => resetSelectedProduct(null)));
     } else {
       updateProduct(_formData['title'], _formData['description'],
           _formData['image'], _formData['price']);
     }
-    Navigator.pushReplacementNamed(context, '/products')
-        .then((_) => resetSelectedProduct(null));
   }
 
   @override
