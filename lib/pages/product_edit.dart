@@ -132,7 +132,9 @@ class _ProudctEditPageState extends State<ProductEditPage> {
           .then((_) => resetSelectedProduct(null)));
     } else {
       updateProduct(_formData['title'], _formData['description'],
-          _formData['image'], _formData['price']);
+              _formData['image'], _formData['price'])
+          .then((_) => Navigator.pushReplacementNamed(context, '/products')
+              .then((_) => resetSelectedProduct(null)));
     }
   }
 
