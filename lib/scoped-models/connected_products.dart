@@ -11,7 +11,7 @@ mixin ConnectedProductsModel on Model {
   String _selectedProductId;
   bool _isLoading = false;
 
-  Future<Null> addProduct(
+  Future<bool> addProduct(
     String title,
     String description,
     String image,
@@ -30,8 +30,11 @@ mixin ConnectedProductsModel on Model {
         .post('https://flutter-products-2c06b.firebaseio.com/products.json',
             body: json.encode(productData))
         .then((http.Response response) {
-      _isLoading = false;
-      notifyListeners();
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
       final Map<String, dynamic> responseData = json.decode(response.body);
       final Product newProduct = Product(
           id: responseData['name'],
@@ -44,6 +47,11 @@ mixin ConnectedProductsModel on Model {
       _products.add(newProduct);
       _isLoading = true;
       notifyListeners();
+      return true;
+    }).catchError((error) {
+      _isLoading = false;
+      notifyListeners();
+      return false;
     });
   }
 }
@@ -85,7 +93,7 @@ mixin ProductsModel on ConnectedProductsModel {
     });
   }
 
-  Future<Null> updateProduct(
+  Future<bool> updateProduct(
       String title, String description, String image, double price) {
     _isLoading = true;
     notifyListeners();
@@ -104,31 +112,31 @@ mixin ProductsModel on ConnectedProductsModel {
             body: json.encode(updateData))
         .then((http.Response rsponse) {
       _isLoading = false;
+      return true;
+    }).catchError((error) {
+      _isLoading = false;
+      notifyListeners();
+      return false;
     });
-    final Product updatedProduct = Product(
-        id: selectedProduct.id,
-        title: title,
-        description: description,
-        image: image,
-        price: price,
-        userEmail: selectedProduct.userEmail,
-        userId: selectedProduct.userId);
-    _products[selectedProductIndex] = updatedProduct;
-    notifyListeners();
   }
 
-  void deleteProduct() {
+  Future<bool> deleteProduct() {
     _isLoading = true;
     final deletedProductId = selectedProduct.id;
     _products.removeAt(selectedProductIndex);
     _selectedProductId = null;
     notifyListeners();
-    http
+    return http
         .delete(
             'https://flutter-products-2c06b.firebaseio.com/products/${deletedProductId}.json/')
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
+      return true;
+    }).catchError((error) {
+      _isLoading = false;
+      notifyListeners();
+      return false;
     });
   }
 
@@ -137,7 +145,7 @@ mixin ProductsModel on ConnectedProductsModel {
     notifyListeners();
     return http
         .get('https://flutter-products-2c06b.firebaseio.com/products.json')
-        .then((http.Response response) {
+        .then<Null>((http.Response response) {
       final List<Product> fetchedProductsList = [];
       final Map<String, dynamic> productListData = json.decode(response.body);
       if (productListData == null) {
@@ -160,6 +168,10 @@ mixin ProductsModel on ConnectedProductsModel {
       _isLoading = false;
       notifyListeners();
       _selectedProductId = null;
+    }).catchError((error) {
+      _isLoading = false;
+      notifyListeners();
+      return;
     });
   }
 
@@ -178,6 +190,7 @@ mixin ProductsModel on ConnectedProductsModel {
         userId: selectedProduct.userId);
     _products[selectedProductIndex] = updateProduct;
     notifyListeners();
+    _selectedProductId = null;
   }
 
   void toogleDisplayMode() {
