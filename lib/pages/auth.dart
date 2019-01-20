@@ -17,7 +17,6 @@ class _AuthPageState extends State<AuthPage> {
   final Map<String, dynamic> _formData = {
     'email': 'sahil@sahil.com',
     'password': '12345678',
-    'confirmPassword': '12345678',
     'acceptTerms': true
   };
 
@@ -63,9 +62,6 @@ class _AuthPageState extends State<AuthPage> {
           return 'Password must be at least 6 charachters';
         }
       },
-      onSaved: (String value) {
-        _formData['password'] = value;
-      },
     );
   }
 
@@ -97,13 +93,38 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  void _submitForm(Function login) {
+  void _submitForm(Function login, Function signup) async {
     if (!_formKey.currentState.validate() || !_formData['acceptTerms']) {
       return;
     }
     _formKey.currentState.save();
-    login(_formData['email'], _formData['password']);
-    Navigator.pushReplacementNamed(context, '/products');
+    if (_authMode == AuthMode.Login) {
+      login(_formData['email'], _formData['password']);
+    } else {
+      final Map<String, dynamic> successInfo =
+          await signup(_formData['email'], _formData['password']);
+      if (successInfo['success']) {
+        Navigator.pushReplacementNamed(context, '/products');
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('An Error Ocurred'),
+              content: Text(successInfo['message']),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Okay'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          },
+        );
+      }
+    }
   }
 
   @override
@@ -159,7 +180,8 @@ class _AuthPageState extends State<AuthPage> {
                           child: Text('LOGIN'),
                           color: Theme.of(context).primaryColor,
                           textColor: Colors.white,
-                          onPressed: () => _submitForm(model.login),
+                          onPressed: () =>
+                              _submitForm(model.login, model.signup),
                         );
                       },
                     )
