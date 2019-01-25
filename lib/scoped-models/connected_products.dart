@@ -67,7 +67,7 @@ mixin ProductsModel on ConnectedProductsModel {
     };
     try {
       final http.Response response = await http.post(
-          'https://flutter-products-2c06b.firebaseio.com/products.json',
+          'https://flutter-products-2c06b.firebaseio.com/products.json?auth=${_authenticatedUser.token}',
           body: json.encode(productData));
       if (response.statusCode != 200 && response.statusCode != 201) {
         _isLoading = false;
@@ -129,7 +129,7 @@ mixin ProductsModel on ConnectedProductsModel {
     notifyListeners();
     return http
         .delete(
-            'https://flutter-products-2c06b.firebaseio.com/products/${deletedProductId}.json/')
+            'https://flutter-products-2c06b.firebaseio.com/products/${deletedProductId}.json?auth=${_authenticatedUser.token}')
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
@@ -145,7 +145,8 @@ mixin ProductsModel on ConnectedProductsModel {
     _isLoading = true;
     notifyListeners();
     return http
-        .get('https://flutter-products-2c06b.firebaseio.com/products.json')
+        .get(
+            'https://flutter-products-2c06b.firebaseio.com/products.json?auth=${_authenticatedUser.token}')
         .then<Null>((http.Response response) {
       final List<Product> fetchedProductsList = [];
       final Map<String, dynamic> productListData = json.decode(response.body);
@@ -227,16 +228,20 @@ mixin UserModel on ConnectedProductsModel {
           body: json.encode(authData),
           headers: {'Content-Type': 'application/json'});
     }
-    final Map<String, dynamic> resposeData = json.decode(response.body);
+    final Map<String, dynamic> responseData = json.decode(response.body);
     bool hasError = true;
     String message = 'Something went wrong';
-    if (resposeData.containsKey('idToken')) {
+    if (responseData.containsKey('idToken')) {
       hasError = false;
       message = 'Authentication succeeded';
-    } else if (resposeData['error']['message'] == ('EMAIL_NOT_FOUND') ||
-        resposeData['error']['message'] == 'INVALID_PASSWORD') {
+      _authenticatedUser = User(
+          id: responseData['localId'],
+          email: email,
+          token: responseData['idToken']);
+    } else if (responseData['error']['message'] == ('EMAIL_NOT_FOUND') ||
+        responseData['error']['message'] == 'INVALID_PASSWORD') {
       message = 'Email or password is invalid';
-    } else if (resposeData['error']['message'] == 'EMAIL_EXISTS') {
+    } else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
       message = 'This email already exists';
     }
     _isLoading = false;
