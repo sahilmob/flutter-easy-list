@@ -96,8 +96,6 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   void _submitForm(Function authenticate) async {
-    print("_formData['password']");
-    print(_formData['password']);
     if (!_formKey.currentState.validate() || !_formData['acceptTerms']) {
       return;
     }
