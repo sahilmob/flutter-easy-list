@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../widgets/products/products.dart';
+import '../widgets/ui_elements/logout-list-tile.dart';
 import "../scoped-models/main.dart";
 
 class ProductsPage extends StatefulWidget {
@@ -34,13 +35,15 @@ class _ProductsPageState extends State<ProductsPage> {
             onTap: () {
               Navigator.pushReplacementNamed(context, '/admin');
             },
-          )
+          ),
+          Divider(),
+          LogoutListTile()
         ],
       ),
     );
   }
 
-  Widget _buildPRoductsList() {
+  Widget _buildProductsList() {
     return ScopedModelDescendant(
         builder: (BuildContext context, Widget child, MainModel model) {
       Widget content = Center(child: Text('No Products Found'));
@@ -74,7 +77,7 @@ class _ProductsPageState extends State<ProductsPage> {
           )
         ],
       ),
-      body: _buildPRoductsList(),
+      body: _buildProductsList(),
     );
   }
 }
