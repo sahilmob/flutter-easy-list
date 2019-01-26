@@ -15,8 +15,8 @@ void main() {
   // debugPaintSizeEnabled = true;
   // debugPaintBaselinesEnabled = true;
   // debugPaintPointersEnabled = true;
-  print(Constants().androidApiKey);
-  MapView.setApiKey(Constants().androidApiKey);
+  print(Constants.androidApiKey);
+  MapView.setApiKey(Constants.androidApiKey);
   runApp(MyApp());
 }
 
