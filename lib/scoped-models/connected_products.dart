@@ -298,15 +298,13 @@ mixin UserModel on ConnectedProductsModel {
     print('logout');
     _authenticatedUser = null;
     _authTimer.cancel();
+    _userSubject.add(false);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
   }
 
   void setAuthTimeout(int time) {
-    _authTimer = Timer(Duration(milliseconds: time * 2), () {
-      logout();
-      _userSubject.add(false);
-    });
+    _authTimer = Timer(Duration(milliseconds: time * 2), logout);
   }
 }
 

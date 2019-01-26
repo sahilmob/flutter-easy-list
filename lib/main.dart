@@ -30,7 +30,6 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     _model.autoAuthenticate();
     _model.userSubject.listen((bool isAuthenticated) {
-      print(isAuthenticated);
       setState(() {
         _isAuthenticated = isAuthenticated;
       });
