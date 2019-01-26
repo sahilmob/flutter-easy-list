@@ -166,7 +166,11 @@ mixin ProductsModel on ConnectedProductsModel {
             image: productData['image'],
             price: productData['price'],
             userEmail: productData['userEmail'],
-            userId: productData['userId']);
+            userId: productData['userId'],
+            isFavorite: productData['wishlistUsers'] == null
+                ? false
+                : (productData['wishlistUsers'] as Map<String, dynamic>)
+                    .containsKey(_authenticatedUser.id));
         fetchedProductsList.add(product);
       });
       _products = fetchedProductsList;
@@ -180,10 +184,11 @@ mixin ProductsModel on ConnectedProductsModel {
     });
   }
 
-  void toggleProductFavorateStatus() {
+  void toggleProductFavorateStatus() async {
     final Product selectedProduct = _products[selectedProductIndex];
     final bool isCurrentlyFavorite = selectedProduct.isFavorite;
     final bool newFavoriteState = !isCurrentlyFavorite;
+    print('liking');
     final Product updateProduct = Product(
         id: selectedProduct.id,
         title: selectedProduct.title,
@@ -195,6 +200,41 @@ mixin ProductsModel on ConnectedProductsModel {
         userId: selectedProduct.userId);
     _products[selectedProductIndex] = updateProduct;
     notifyListeners();
+    http.Response response;
+    if (newFavoriteState) {
+      response = await http.put(
+          'https://flutter-products-2c06b.firebaseio.com/products/${selectedProduct.id}/wishlistUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}',
+          body: json.encode(true));
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        final Product updateProduct = Product(
+            id: selectedProduct.id,
+            title: selectedProduct.title,
+            description: selectedProduct.description,
+            price: selectedProduct.price,
+            image: selectedProduct.image,
+            isFavorite: !newFavoriteState,
+            userEmail: selectedProduct.userEmail,
+            userId: selectedProduct.userId);
+        _products[selectedProductIndex] = updateProduct;
+        notifyListeners();
+      }
+    } else {
+      response = await http.delete(
+          'https://flutter-products-2c06b.firebaseio.com/products/${selectedProduct.id}/wishlistUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}');
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        final Product updateProduct = Product(
+            id: selectedProduct.id,
+            title: selectedProduct.title,
+            description: selectedProduct.description,
+            price: selectedProduct.price,
+            image: selectedProduct.image,
+            isFavorite: !newFavoriteState,
+            userEmail: selectedProduct.userEmail,
+            userId: selectedProduct.userId);
+        _products[selectedProductIndex] = updateProduct;
+        notifyListeners();
+      }
+    }
     _selectedProductId = null;
   }
 
@@ -304,7 +344,7 @@ mixin UserModel on ConnectedProductsModel {
   }
 
   void setAuthTimeout(int time) {
-    _authTimer = Timer(Duration(milliseconds: time * 2), logout);
+    _authTimer = Timer(Duration(seconds: time), logout);
   }
 }
 
