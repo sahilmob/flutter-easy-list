@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:map_view/map_view.dart';
 // import 'package:flutter/rendering.dart';
 
 import './pages/auth.dart';
@@ -8,11 +9,14 @@ import './pages/products.dart';
 import './pages/product.dart';
 import './scoped-models/main.dart';
 import './models/product.dart';
+import './constants/api.dart';
 
 void main() {
   // debugPaintSizeEnabled = true;
   // debugPaintBaselinesEnabled = true;
   // debugPaintPointersEnabled = true;
+  print(Constants().androidApiKey);
+  MapView.setApiKey(Constants().androidApiKey);
   runApp(MyApp());
 }
 
